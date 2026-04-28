@@ -1,16 +1,3 @@
-import os
-import subprocess
-import sys
-import time
-
-# --- STEP 1: AUTO-DOWNLOAD SPACY MODEL (DO NOT REMOVE) ---
-try:
-    import en_core_web_sm
-except ImportError:
-    subprocess.check_call([sys.executable, "-m", "spacy", "download", "en_core_web_sm"])
-    time.sleep(2)
-    import en_core_web_sm
-
 # --- STEP 2: IMPORTS ---
 import streamlit as st
 import pdfplumber
