@@ -3,5 +3,4 @@ pdfplumber
 python-docx
 pandas
 reportlab
-scikit-learn
 nltk
