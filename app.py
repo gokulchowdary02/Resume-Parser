@@ -1,34 +1,30 @@
 import streamlit as st
 import pdfplumber
 import docx
-import re
-import spacy
 import pandas as pd
+import nltk
 
-# These must exist in your GitHub repo as skills.py and job_roles.py
 from skills import SKILLS
 from job_roles import JOB_ROLES
 
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
 
-# --- STEP 3: INITIALIZATION ---
-nlp = spacy.load("en_core_web_sm")
+nltk.download('punkt', quiet=True)
+nltk.download('punkt_tab', quiet=True)
+nltk.download('stopwords', quiet=True)
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
+stop_words = set(stopwords.words('english'))
 
 st.set_page_config(page_title="AI Resume Analyzer", layout="wide")
 
-# Custom CSS for UI
 st.markdown("""<style>
 .stApp { background-color: #0f172a; color: #e5e7eb; }
 .card { background: #1e293b; padding: 16px; border-radius: 12px; margin-bottom: 12px; }
 .badge { padding: 4px 10px; border-radius: 8px; background: linear-gradient(90deg, #6366f1, #8b5cf6); color: white; font-weight: bold; }
 .stButton>button { background: linear-gradient(90deg, #6366f1, #8b5cf6); color: white; }
-[data-testid="stDownloadButton"] button {
-    background: linear-gradient(90deg, #6366f1, #8b5cf6);
-    color: white;
-    border-radius: 8px;
-    font-weight: bold;
-}
+[data-testid="stDownloadButton"] button { background: linear-gradient(90deg, #6366f1, #8b5cf6); color: white; border-radius: 8px; font-weight: bold; }
 .stProgress > div > div { background: linear-gradient(90deg, #6366f1, #8b5cf6); }
 [data-testid="stMetric"] { background: #1e293b; padding: 15px; border-radius: 12px; text-align: center; }
 [data-testid="stMetricLabel"] { color: #94a3b8 !important; }
@@ -38,20 +34,17 @@ st.markdown("""<style>
 st.title("🚀 RESUME PARSER USING ML")
 st.markdown("---")
 
-# Session State for persistency
 if "results" not in st.session_state:
     st.session_state.results = []
 if "pdf" not in st.session_state:
     st.session_state.pdf = None
 
-# --- SIDEBAR ---
 st.sidebar.header("📂 Upload & Configure")
 uploaded_files = st.sidebar.file_uploader("Upload Resumes", type=["pdf", "docx"], accept_multiple_files=True)
 job_desc = st.sidebar.text_area("Job Description")
 ACCEPT_THRESHOLD = st.sidebar.slider("Hiring Threshold (%)", 0, 100, 50)
 analyze_btn = st.sidebar.button("🚀 Analyze Candidates")
 
-# --- FUNCTIONS ---
 def extract_text(file):
     if file.name.endswith(".pdf"):
         with pdfplumber.open(file) as pdf:
@@ -62,8 +55,8 @@ def extract_text(file):
     return ""
 
 def preprocess_text(text):
-    doc = nlp(text)
-    return [t.lemma_.lower() for t in doc if not t.is_stop and not t.is_punct]
+    tokens = word_tokenize(text.lower())
+    return [t for t in tokens if t.isalpha() and t not in stop_words]
 
 def extract_skills(text, tokens):
     text_lower = text.lower()
@@ -87,7 +80,6 @@ def generate_pdf(results):
     doc = SimpleDocTemplate(file_path)
     styles = getSampleStyleSheet()
     content = [Paragraph("<b>AI Resume Analysis Report</b>", styles["Title"]), Spacer(1, 20)]
-    
     if results:
         best = max(results, key=lambda x: x["jd_score"])
         content.append(Paragraph(f"<b>Best Candidate:</b> {best['file']} ({best['jd_score']}%)", styles["Normal"]))
@@ -98,7 +90,6 @@ def generate_pdf(results):
     doc.build(content)
     return file_path
 
-# --- CORE LOGIC ---
 if analyze_btn and uploaded_files:
     st.session_state.results = []
     for file in uploaded_files:
@@ -112,7 +103,6 @@ if analyze_btn and uploaded_files:
             "matched_skills": matched, "text": text, "decision": decision
         })
 
-# --- UI OUTPUT ---
 results = st.session_state.results
 if results:
     best = max(results, key=lambda x: x["jd_score"])
@@ -138,7 +128,7 @@ if results:
         st.markdown(f"""<div class="card"><b>{c['file']}</b><br>Match Score: <span class="badge">{c['jd_score']}%</span><br>Decision: <span style="color:{color}; font-weight:bold;">{c['decision']}</span><br>Matched Skills: {', '.join(c['matched_skills'])}</div>""", unsafe_allow_html=True)
         st.progress(c["jd_score"] / 100)
         with st.expander("📄 View Resume"):
-            st.markdown(f"""<div style="background:#0f172a; padding:15px; border-radius:10px;">{c["text"][:2000].replace('\n','<br>')}</div>""", unsafe_allow_html=True)
+            st.markdown(f"""<div style="background:#0f172a; padding:15px; border-radius:10px;">{c["text"][:2000].replace(chr(10),'<br>')}</div>""", unsafe_allow_html=True)
 
     st.markdown("---")
     st.markdown("### 📄 Report")
