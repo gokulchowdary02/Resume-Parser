@@ -1,4 +1,12 @@
-import streamlit as st
+import os
+import subprocess
+import sys
+
+# This part tells the server to download the model if it's missing
+try:
+    import en_core_web_sm
+except ImportError:
+    subprocess.check_call([sys.executable, "-m", "spacy", "download", "en_core_web_sm"])import streamlit as st
 import pdfplumber
 import docx
 import re
