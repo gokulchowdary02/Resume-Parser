@@ -4,3 +4,4 @@ python-docx
 pandas
 reportlab
 nltk
+plotly
