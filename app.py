@@ -1,4 +1,3 @@
-# --- STEP 2: IMPORTS ---
 import streamlit as st
 import pdfplumber
 import docx
