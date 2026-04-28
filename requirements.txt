@@ -4,4 +4,4 @@ python-docx
 spacy==3.7.5
 pandas
 reportlab
-https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.5/en_core_web_sm-3.7.5-py3-none-any.whl
+en-core-web-sm==3.7.1
