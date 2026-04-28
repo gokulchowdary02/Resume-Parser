@@ -1,7 +1,7 @@
 streamlit
 pdfplumber
 python-docx
-spacy==3.7.5
 pandas
 reportlab
-en-core-web-sm==3.7.1
+scikit-learn
+nltk
