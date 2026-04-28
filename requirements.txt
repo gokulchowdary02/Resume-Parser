@@ -4,4 +4,3 @@ python-docx
 spacy
 pandas
 reportlab
-en_core_web_sm
