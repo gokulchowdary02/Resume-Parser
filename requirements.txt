@@ -1,6 +1,0 @@
-streamlit
-pdfplumber
-python-docx
-spacy
-pandas
-reportlab
