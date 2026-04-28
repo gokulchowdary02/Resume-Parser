@@ -106,3 +106,64 @@ def generate_pdf(results):
         best = max(results, key=lambda x: x["jd_score"])
         content.append(Paragraph(f"<b>Best Candidate:</b> {best['file']} ({best['jd_score']}%)", styles["Normal"]))
         content.append(Spacer(1, 10))
+        for c in results:
+            text = f"<b>{c['file']}</b><br/>Score: {c['jd_score']}%<br/>Decision: {c['decision']}<br/>Skills: {', '.join(c['skills'])}<br/><br/>"
+            content.append(Paragraph(text, styles["Normal"]))
+    doc.build(content)
+    return file_path
+
+# --- CORE LOGIC ---
+if analyze_btn and uploaded_files:
+    st.session_state.results = []
+    for file in uploaded_files:
+        text = extract_text(file)
+        tokens = preprocess_text(text)
+        skills = extract_skills(text, tokens)
+        jd_score, matched = match_with_jd(skills, job_desc)
+        decision = "Hire" if jd_score >= ACCEPT_THRESHOLD else "Reject"
+        st.session_state.results.append({
+            "file": file.name, "skills": skills, "jd_score": jd_score,
+            "matched_skills": matched, "text": text, "decision": decision
+        })
+
+# --- UI OUTPUT ---
+results = st.session_state.results
+if results:
+    best = max(results, key=lambda x: x["jd_score"])
+    avg = sum([c["jd_score"] for c in results]) / len(results)
+
+    col1, col2, col3 = st.columns(3)
+    col1.metric("Best Match", f"{best['jd_score']}%")
+    col2.metric("Average Score", f"{round(avg,1)}%")
+    col3.metric("Candidates", len(results))
+    st.markdown("---")
+
+    st.markdown("### 🏆 Best Candidate")
+    st.markdown(f"""<div class="card"><b>{best['file']}</b><br>Match Score: <span class="badge">{best['jd_score']}%</span><br>Decision: <b>{best['decision']}</b><br>Matched Skills: {', '.join(best['matched_skills'])}</div>""", unsafe_allow_html=True)
+
+    st.markdown("---")
+    st.markdown("### 📊 Candidate Comparison")
+    st.dataframe(pd.DataFrame(results)[["file", "jd_score", "decision"]])
+
+    st.markdown("---")
+    st.markdown("### 📂 Candidates")
+    for c in sorted(results, key=lambda x: x["jd_score"], reverse=True):
+        color = "#22c55e" if c["decision"] == "Hire" else "#ef4444"
+        st.markdown(f"""<div class="card"><b>{c['file']}</b><br>Match Score: <span class="badge">{c['jd_score']}%</span><br>Decision: <span style="color:{color}; font-weight:bold;">{c['decision']}</span><br>Matched Skills: {', '.join(c['matched_skills'])}</div>""", unsafe_allow_html=True)
+        st.progress(c["jd_score"] / 100)
+        with st.expander("📄 View Resume"):
+            st.markdown(f"""<div style="background:#0f172a; padding:15px; border-radius:10px;">{c["text"][:2000].replace('\n','<br>')}</div>""", unsafe_allow_html=True)
+
+    st.markdown("---")
+    st.markdown("### 📄 Report")
+    if st.button("Generate PDF Report"):
+        path = generate_pdf(results)
+        with open(path, "rb") as f:
+            st.session_state.pdf = f.read()
+
+    if st.session_state.pdf:
+        st.download_button("📥 Download PDF", data=st.session_state.pdf, file_name="report.pdf", mime="application/pdf")
+
+    st.markdown("### 📈 Score Comparison")
+    chart_df = pd.DataFrame({"Candidate": [c["file"] for c in results], "Score": [c["jd_score"] for c in results]})
+    st.bar_chart(chart_df.set_index("Candidate"))
