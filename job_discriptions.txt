@@ -1,0 +1,82 @@
+1. Software Engineer 
+We are looking for a Software Developer responsible for designing, coding, testing, and maintaining scalable applications.
+
+Responsibilities:
+- Develop and maintain web applications
+- Write clean and efficient code
+- Debug and optimize performance issues
+- Collaborate with cross-functional teams
+
+Skills Required:
+Python, Java, C++, JavaScript, React, Node.js, Django, MySQL, MongoDB, Git
+
+2. Data Analyst 
+We are seeking a Data Analyst who can interpret data and provide actionable insights.
+
+Responsibilities:
+- Analyze datasets and identify trends
+- Create reports and dashboards
+- Work with stakeholders
+
+Skills Required:
+SQL, Excel, Python, Pandas, NumPy, Power BI, Tableau
+
+
+3. Machine Learning Engineer
+Looking for a Machine Learning Engineer to build and deploy ML models.
+
+Responsibilities:
+- Develop predictive models
+- Train and evaluate ML models
+- Perform data preprocessing
+
+Skills Required:
+Python, TensorFlow, PyTorch, Scikit-learn, Statistics, Linear Algebra
+
+
+4. Web Developer
+We are hiring a Web Developer to build responsive web applications.
+
+Responsibilities:
+- Develop front-end and back-end components
+- Ensure performance and scalability
+- Maintain websites
+
+Skills Required:
+HTML, CSS, JavaScript, React, Angular, Node.js, Django, PHP
+
+
+5.QA Engineer 
+We need a QA Engineer to ensure software quality through testing.
+
+Responsibilities:
+- Write and execute test cases
+- Identify bugs
+- Collaborate with development teams
+
+Skills Required:
+Manual Testing, Automation Testing, Selenium, JUnit
+
+
+6. Mobile App Developer
+Seeking a Mobile App Developer to build Android and iOS applications.
+
+Responsibilities:
+- Develop mobile applications
+- Debug and improve performance
+- Integrate APIs
+
+Skills Required:
+Flutter, React Native, Swift, Kotlin, REST APIs
+
+
+7. UI/UX Designer
+We need a UI/UX Designer to design user-friendly interfaces.
+
+Responsibilities:
+- Create UI designs
+- Conduct user research
+- Improve user experience
+
+Skills Required:
+Figma, Adobe XD, Wireframing, Prototyping, Usability Testing
